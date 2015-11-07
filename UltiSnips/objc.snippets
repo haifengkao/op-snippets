@@ -1,6 +1,75 @@
 priority -50
 
 ###########################################################################
+#                            HF Snippets                                  #
+###########################################################################
+
+snippet @p "Property"
+@property ${1}
+endsnippet
+
+snippet ext "weakify header"
+#import <ReactiveCocoa/RACEXTScope.h>
+endsnippet
+
+snippet if "if"
+if ($1) {
+		$2;
+} 
+endsnippet
+
+snippet else "else"
+else {
+		$1;
+}
+endsnippet
+
+snippet @in "interface"
+@interface ${1:`!p snip.rv = re.sub(r'\..*$', '', fn)`} : ${2:NSObject}
+${3}
+@end
+endsnippet
+
+snippet @im "implementation"
+@implementation ${1:`!p snip.rv = re.sub(r'\..*$', '', fn)`}
+
+- (instancetype)init
+{
+	if (self = [super init]) {
+		$0
+	}
+	return self;
+}
+
+@end
+endsnippet
+
+# header template for .m files
+# the project name is set to the name of working directory
+snippet mte
+//
+//  `!p snip.rv = re.sub(r'\..*$', '.m', fn)`
+//  `!v split(getcwd(), '/')[-1]`
+//
+//  Created by `!v g:snips_author` on `!v strftime('%Y/%m/%d')`.
+//
+//
+endsnippet
+
+# header template for .h files
+snippet hte
+//
+//  `!p snip.rv = re.sub(r'\..*$', '.h', fn)`
+//  `!v split(getcwd(), '/')[-1]`
+//
+//  Created by `!v g:snips_author` on `!v strftime('%Y/%m/%d')`.
+//
+//
+
+#import <Foundation/Foundation.h>
+endsnippet
+
+###########################################################################
 #                            TextMate Snippets                            #
 ###########################################################################
 
