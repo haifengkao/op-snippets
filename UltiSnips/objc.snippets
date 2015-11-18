@@ -73,13 +73,13 @@ endsnippet
 #                            TextMate Snippets                            #
 ###########################################################################
 
-snippet imp "#import (imp)" b
-#import "${1:`!p snip.rv = re.sub(r'\..*$', '.h', fn)`}"
-endsnippet
+#snippet imp "#import (imp)" b
+##import "${1:`!p snip.rv = re.sub(r'\..*$', '.h', fn)`}"
+#endsnippet
 
-snippet Imp "#import <> (Imp)"
-#import <${1:Cocoa/Cocoa.h}>
-endsnippet
+#snippet Imp "#import <> (Imp)"
+##import <${1:Cocoa/Cocoa.h}>
+#endsnippet
 
 snippet cl "020 Class (objc)"
 @interface ${1:`!p
