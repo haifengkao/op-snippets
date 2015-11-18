@@ -4,6 +4,41 @@ priority -50
 #                            HF Snippets                                  #
 ###########################################################################
 
+snippet isk "isKindOfClass"
+isKindOfClass:${1:NSString} class${2}
+endsnippet
+
+snippet @st "weakify"
+@strongify(${1:self});
+endsnippet
+
+snippet @we "weakify"
+@weakify(${1:self});
+endsnippet
+
+snippet once "dispatch_once" 
+static dispatch_once_t onceToken;
+dispatch_once(&onceToken, ^{
+	$1
+});
+endsnippet
+
+snippet #im "#import (imp)" b
+#import "${1:`!p snip.rv = re.sub(r'\..*$', '.h', fn)`}"
+endsnippet
+
+snippet #imp "#import <> (Imp)"
+#import <${1:Foundation/Foundation.h}>
+endsnippet
+
+snippet @mb "Block Method Parameters"
+(${1:returnType} (^)(${2:parameterTypes})${3:blockName}
+endsnippet
+
+snippet @pb "Block Property"
+@property (nonatomic, copy) ${1:void} (^${2:blockName})(${3:parameterTypes}); 
+endsnippet
+
 snippet @p "Property"
 @property ${1}
 endsnippet
