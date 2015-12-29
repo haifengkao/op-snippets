@@ -4,11 +4,47 @@ priority -50
 #                            HF Snippets                                  #
 ###########################################################################
 
+snippet a "Assert"
+NSAssert(${1:NO}, @"${2}");
+endsnippet
+
+snippet @p "Property"
+@property (${1/^(e)$|.*/(?1:r)/}${1:r}${1/^(?:(s)|(e)|(c)|(a))$|.*/(?1:trong)(?2:adonly)(?3:opy)(?4:ssign)/}) ${2:NSSomeClass}* ${3:${2/^[A-Z](?:[A-Z]+|[a-z]+)([A-Z]\w*)/\l$1/}};
+endsnippet
+
+snippet r "return"
+return ${1}
+endsnippet
+
+snippet { "curly bracket"
+{
+	${1}
+}
+endsnippet
+
+snippet for "forin loop"
+for (${1:object} in ${2:objects}) {
+	${3}
+}
+endsnippet
+
+snippet fori "for i loop"
+for (NSInteger i = 0; i < ${1:count}; ++i) {
+	${2}
+}
+endsnippet
+
+snippet forj "for index loop"
+for (NSInteger j = 0; j < ${1:count}; ++j) {
+	${2}
+}
+endsnippet
+
 snippet isk "isKindOfClass"
 isKindOfClass:${1:NSString} class${2}
 endsnippet
 
-snippet @st "weakify"
+snippet @st "strongify"
 @strongify(${1:self});
 endsnippet
 
@@ -39,23 +75,19 @@ snippet @pb "Block Property"
 @property (nonatomic, copy) ${1:void} (^${2:blockName})(${3:parameterTypes}); 
 endsnippet
 
-snippet @p "Property"
-@property ${1}
-endsnippet
-
 snippet ext "weakify header"
 #import <ReactiveCocoa/RACEXTScope.h>
 endsnippet
 
 snippet if "if"
 if ($1) {
-		
+	$2
 } 
 endsnippet
 
 snippet else "else"
 else {
-		$1;
+	$1;
 }
 endsnippet
 
@@ -309,9 +341,9 @@ snippet objacc "Object Accessors Interface (objacc)"
 - (void)set${2/./\u$0/}:($1)aValue;
 endsnippet
 
-snippet prop "Property"
-@property (${1/^(e)$|.*/(?1:r)/}${1:r}${1/^(?:(r)|(e)|(c)|(a))$|.*/(?1:etain)(?2:adonly)(?3:opy)(?4:ssign)/}) ${2:NSSomeClass}$ *${3:${2/^[A-Z](?:[A-Z]+|[a-z]+)([A-Z]\w*)/\l$1/}};
-endsnippet
+#snippet prop "Property"
+#@property (${1/^(e)$|.*/(?1:r)/}${1:r}${1/^(?:(r)|(e)|(c)|(a))$|.*/(?1:etain)(?2:adonly)(?3:opy)(?4:ssign)/}) ${2:NSSomeClass}$ *${3:${2/^[A-Z](?:[A-Z]+|[a-z]+)([A-Z]\w*)/\l$1/}};
+#endsnippet
 
 snippet getprefs "Read from defaults (getprefs)"
 [[NSUserDefaults standardUserDefaults] objectForKey:${1:key}];
