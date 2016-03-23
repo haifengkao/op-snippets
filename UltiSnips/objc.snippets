@@ -45,11 +45,11 @@ isKindOfClass:${1:NSString} class${2}
 endsnippet
 
 snippet @st "strongify"
-@strongify(${1:self});
+@strongify(self);
 endsnippet
 
 snippet @we "weakify"
-@weakify(${1:self});
+@weakify(self);
 endsnippet
 
 snippet once "dispatch_once" 
@@ -113,12 +113,13 @@ endsnippet
 
 # header template for .m files
 # the project name is set to the name of working directory
+# implementation see: http://vi.stackexchange.com/questions/2867/how-do-you-chomp-a-string-in-vim
 snippet mte
 //
 //  `!p snip.rv = re.sub(r'\..*$', '.m', fn)`
 //  `!v split(getcwd(), '/')[-1]`
 //
-//  Created by `!v g:snips_author` on `!v strftime('%Y/%m/%d')`.
+//  Created by `!v systemlist('git config user.name || whoami')[0]` on `!v strftime('%Y/%m/%d')`.
 //
 //
 
@@ -130,11 +131,68 @@ snippet hte
 //  `!p snip.rv = re.sub(r'\..*$', '.h', fn)`
 //  `!v split(getcwd(), '/')[-1]`
 //
-//  Created by `!v g:snips_author` on `!v strftime('%Y/%m/%d')`.
+//  Created by `!v systemlist('git config user.name || whoami')[0]` on `!v strftime('%Y/%m/%d')`.
 //
 //
 
 #import <Foundation/Foundation.h>
+endsnippet
+
+# spec template for kiwi spec files
+snippet specte
+//
+//  `!p snip.rv = re.sub(r'\..*$', '.m', fn)`
+//  `!v split(getcwd(), '/')[-1]`
+//
+//  Created by `!v systemlist('git config user.name || whoami')[0]` on `!v strftime('%Y/%m/%d')`.
+//
+
+#import <Kiwi/Kiwi.h>
+#import "`!p snip.rv = re.sub(r'\..*$', '', fn)[:-4:] + ".h"`"
+
+SPEC_BEGIN(`!p snip.rv = re.sub(r'\..*$', '', fn)`)
+
+describe(@"`!p snip.rv = re.sub(r'\..*$', '', fn)[:-4:]`", ^{
+
+	let(testee, ^{ // Occurs before each enclosed "it"
+		return [[`!p snip.rv = re.sub(r'\..*$', '', fn)[:-4:]` alloc] init];
+	});
+	let(done, ^{ // Occurs before each enclosed "it"
+		return @(0);
+	});
+	
+	beforeAll(^{ // Occurs once
+	});
+	
+	afterAll(^{ // Occurs once
+	});
+	
+	beforeEach(^{ // Occurs before each enclosed "it"
+	});
+	
+	afterEach(^{ // Occurs after each enclosed "it"
+	});
+	
+	specify(^{
+		[[testee shouldNot] beNil];
+	});
+	
+	it(@"should do something", ^{
+		[[testee should] meetSomeExpectation];
+	});
+	
+	it(@"asynchronous do something", ^{
+		[[testee should] meetSomeExpectation];
+		done = @(1);
+		[[expectFutureValue(done) shouldEventually] beTrue];
+	});
+	
+	pending(@"something unimplemented", ^{
+	});
+
+});
+
+SPEC_END
 endsnippet
 
 ###########################################################################
