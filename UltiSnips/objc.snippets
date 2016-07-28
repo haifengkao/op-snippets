@@ -4,8 +4,113 @@ priority -50
 #                            HF Snippets                                  #
 ###########################################################################
 
+# RACObserve NSObject+RACPropertySubscribing.h
+# import "EXTSynthesize.h"
+snippet @syn "category property"
+@synthesizeAssociation(`!p snip.rv = re.sub(r'\..*$', '', fn)`, ${1:myProperty}); // add category variable
+endsnippet
+
+snippet error
+[NSError errorWithDomain:@"${1:domain}" code:${2:123} userInfo:@{NSLocalizedDescriptionKey:@"${3}"}]
+endsnippet
+
+snippet waitForever
+[[expectFutureValue(done) shouldEventuallyBeforeTimingOutAfter(10000000000)] beTrue];
+endsnippet
+
+snippet safe "SAFE_CAST"
+[${1} isKindOfClass:[${2} class]] ? ($2*)$1 : nil
+endsnippet
+
+snippet context
+context(@"${1:when something happened}", ^{
+	${2}
+});
+endsnippet
+
+snippet it
+it(@"${1:does something }", ^{
+	${2}
+});
+endsnippet
+
+snippet OnTypedef
+typedef void (^${1:OnIdComplete})(id data, NSError* error);
+endsnippet 
+
+snippet OnComplete
+(void(^)(${1:id}))
+endsnippet
+
+snippet enumerate
+	enumerateKeysAndObjectsUsingBlock:^(NSString* key, ${1:NSObject}* value, BOOL* stop){
+		${2}
+	}];
+endsnippet
+
+snippet subscribeNext
+subscribeNext:^(id x) {
+	${2}
+}];
+endsnippet
+
+snippet completed
+completed:^{
+	${2}
+}];
+endsnippet
+
+snippet SubscribeNext
+subscribeNext:^(id x) {
+	${2}
+} error:^(NSError *error) {
+} completed:^{
+}];
+endsnippet
+
+snippet filter
+filter:^BOOL(id value)){
+	${2}
+}];
+endsnippet
+
+snippet map
+map:^${1:id}(${2:id} ${3:value}){
+	${4}
+}];
+endsnippet
+
+snippet flattenMap
+flattenMap:^RACStream*(id value){
+	${2}
+}];
+endsnippet
+snippet createSignal
+[RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) 
+{
+	${1}
+	return [RACDisposable disposableWithBlock:^{
+		
+	}];
+}];
+endsnippet
+
+snippet session "Download with NSURLSession"
+NSURL* url = nil;
+NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:url];
+NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithRequest:request completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) {
+	NSLog(@"%@",[[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding]);
+} ];
+[task resume];
+_task = task;
+endsnippet
+
 snippet a "Assert"
 NSAssert(${1:NO}, @"${2}");
+endsnippet
+
+snippet @pn "Nonatomic Property"
+@property (nonatomic, ${1/^(e)$|.*/(?1:s)/}${1:s}${1/^(?:(s)|(r)|(c)|(a))$|.*/(?1:trong)(?2:eadonly)(?3:opy)(?4:ssign)/}) ${2:NSSomeClass}* ${3:${2/^[A-Z](?:[A-Z]+|[a-z]+)([A-Z]\w*)/\l$1/}};
 endsnippet
 
 snippet @p "Property"
@@ -44,6 +149,14 @@ snippet isk "isKindOfClass"
 isKindOfClass:${1:NSString} class${2}
 endsnippet
 
+snippet @str "strongify"
+__strong __typeof__(selfRef) self = selfRef;
+endsnippet
+
+snippet @wea "weakify"
+__weak __typeof__(self) selfRef = self;
+endsnippet
+
 snippet @st "strongify"
 @strongify(self);
 endsnippet
@@ -76,7 +189,7 @@ snippet @pb "Block Property"
 endsnippet
 
 snippet ext "weakify header"
-#import <ReactiveCocoa/RACEXTScope.h>
+#import "RACEXTScope.h"
 endsnippet
 
 snippet if "if"
@@ -92,13 +205,19 @@ else {
 endsnippet
 
 snippet @in "interface"
-@interface ${1:`!p snip.rv = re.sub(r'\..*$', '', fn)`} : ${2:NSObject}
+@interface `!p snip.rv = re.sub(r'\..*$', '', fn)` : NSObject
+${3}
+@end
+endsnippet
+
+snippet @int "extension"
+@interface `!p snip.rv = re.sub(r'\..*$', '', fn)`()
 ${3}
 @end
 endsnippet
 
 snippet @im "implementation"
-@implementation ${1:`!p snip.rv = re.sub(r'\..*$', '', fn)`}
+@implementation `!p snip.rv = re.sub(r'\..*$', '', fn)`
 
 - (instancetype)init
 {
@@ -109,6 +228,16 @@ snippet @im "implementation"
 }
 
 @end
+endsnippet
+
+snippet init
+- (instancetype)init
+{
+	if (self = [super init]) {
+		$0
+	}
+	return self;
+}
 endsnippet
 
 # header template for .m files
@@ -123,6 +252,7 @@ snippet mte
 //
 //
 
+#import "`!p snip.rv = re.sub(r'\..*$', '.h', fn)`"
 endsnippet
 
 # header template for .h files
@@ -138,8 +268,107 @@ snippet hte
 #import <Foundation/Foundation.h>
 endsnippet
 
+# spec template for kiwi and nocilla spec files
+snippet nte
+//
+//  `!p snip.rv = re.sub(r'\..*$', '.m', fn)`
+//  `!v split(getcwd(), '/')[-1]`
+//
+//  Created by `!v systemlist('git config user.name || whoami')[0]` on `!v strftime('%Y/%m/%d')`.
+//
+
+#import <Kiwi/Kiwi.h>
+#import "Nocilla.h"
+#import "`!p snip.rv = re.sub(r'\..*$', '', fn)[:-4:] + ".h"`"
+
+// bundleName doesn't have extension (e.g. ".bundle")
+void loadBundle(NSString* bundleName, NSObject* testSpec)
+{
+	NSString* localDomainName = @"localtest.com";
+	NSString* dataName        = bundleName;
+	NSString* fileName        = [dataName stringByAppendingPathExtension:@"bundle"];
+
+	NSBundle* bundle          = [NSBundle bundleForClass:testSpec.class];
+	NSString* bundlePath      = [bundle pathForResource:[fileName stringByDeletingPathExtension] ofType:[fileName pathExtension]];
+	NSBundle* resourceBundle  = [NSBundle bundleWithPath:bundlePath];
+
+	NSString* htmlName        = [NSString stringWithFormat:@"%@.html", dataName];
+	NSString* folderName      = [NSString stringWithFormat:@"%@_files", dataName];
+	NSString* folderPath      = [resourceBundle.resourcePath stringByAppendingPathComponent:folderName];
+	NSString* htmlPath        = [resourceBundle.resourcePath stringByAppendingPathComponent:htmlName];
+	NSData*   htmlData        = [NSData dataWithContentsOfFile:htmlPath];
+	NSString* htmlStr         = nil;
+	BOOL lossy                = NO;
+	NSStringEncoding encoding = [NSString stringEncodingForData:htmlData encodingOptions:nil convertedString:&htmlStr usedLossyConversion:&lossy];
+	NSString* htmlLink        = [[NSString stringWithFormat:@"https://%@/%@", localDomainName, htmlName] stringByAddingPercentEscapesUsingEncoding:encoding];
+	NSError* error            = nil;
+	
+	stubRequest(@"GET", htmlLink).
+	andReturn(200).
+	withBody(htmlData);
+	
+	NSArray* files = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:folderPath error:&error];
+	for (NSString* filePath in files) {
+		NSString* path = [NSString stringWithFormat:@"https://%@/%@/%@", localDomainName, [folderPath lastPathComponent],filePath];
+		NSString* encoded = [path stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+		NSData* data = [NSData dataWithContentsOfFile:[folderPath stringByAppendingPathComponent:filePath]];
+		stubRequest(@"GET", encoded).
+		andReturn(200).
+		withBody(data);
+	}
+}
+
+SPEC_BEGIN(`!p snip.rv = re.sub(r'\..*$', '', fn)`)
+
+describe(@"`!p snip.rv = re.sub(r'\..*$', '', fn)[:-4:]`", ^{
+
+	let(testee, ^{ // Occurs before each enclosed "it"
+		return [[`!p snip.rv = re.sub(r'\..*$', '', fn)[:-4:]` alloc] init];
+	});
+	let(done, ^{ // Occurs before each enclosed "it"
+		return @(0);
+	});
+	
+	beforeAll(^{ // Occurs once
+		[[LSNocilla sharedInstance] start];
+	});
+	
+	afterAll(^{ // Occurs once
+		[[LSNocilla sharedInstance] stop];
+	});
+	
+	beforeEach(^{ // Occurs before each enclosed "it"
+	});
+	
+	afterEach(^{ // Occurs after each enclosed "it"
+		[[LSNocilla sharedInstance] clearStubs];
+	});
+	
+	specify(^{
+		[[testee shouldNot] beNil];
+	});
+	
+	it(@"should do something", ^{
+		[[testee should] meetSomeExpectation];
+	});
+	
+	it(@"asynchronous do something", ^{
+		[[testee should] meetSomeExpectation];
+		done = @(1);
+		[[expectFutureValue(done) shouldEventually] beTrue];
+	});
+	
+	pending(@"something unimplemented", ^{
+	});
+
+});
+
+SPEC_END
+endsnippet
+
+
 # spec template for kiwi spec files
-snippet specte
+snippet tte
 //
 //  `!p snip.rv = re.sub(r'\..*$', '.m', fn)`
 //  `!v split(getcwd(), '/')[-1]`
@@ -184,7 +413,7 @@ describe(@"`!p snip.rv = re.sub(r'\..*$', '', fn)[:-4:]`", ^{
 	it(@"asynchronous do something", ^{
 		[[testee should] meetSomeExpectation];
 		done = @(1);
-		[[expectFutureValue(done) shouldEventually] beTrue];
+		[[expectFutureValue(done) shouldEventuallyBeforeTimingOutAfter(100000.0)] beTrue];
 	});
 	
 	pending(@"something unimplemented", ^{
@@ -456,9 +685,10 @@ snippet stracc "String Accessors (stracc)"
 }
 endsnippet
 
-snippet syn "Synthesize"
-@synthesize ${1:property};
-endsnippet
+# syn is used for category property
+#snippet syn "Synthesize"
+#@synthesize ${1:property};
+#endsnippet
 
 snippet setprefs "Write to defaults (setprefs)"
 [[NSUserDefaults standardUserDefaults] setObject:${1:object} forKey:${2:key}];
