@@ -60,7 +60,7 @@ completed:^{
 }];
 endsnippet
 
-snippet SubscribeNext
+snippet subscribe
 subscribeNext:^(id x) {
 	${2}
 } error:^(NSError *error) {
@@ -243,7 +243,7 @@ endsnippet
 # header template for .m files
 # the project name is set to the name of working directory
 # implementation see: http://vi.stackexchange.com/questions/2867/how-do-you-chomp-a-string-in-vim
-snippet mte
+snippet mt
 //
 //  `!p snip.rv = re.sub(r'\..*$', '.m', fn)`
 //  `!v split(getcwd(), '/')[-1]`
@@ -256,7 +256,7 @@ snippet mte
 endsnippet
 
 # header template for .h files
-snippet hte
+snippet ht
 //
 //  `!p snip.rv = re.sub(r'\..*$', '.h', fn)`
 //  `!v split(getcwd(), '/')[-1]`
@@ -269,7 +269,7 @@ snippet hte
 endsnippet
 
 # spec template for kiwi and nocilla spec files
-snippet nte
+snippet nt
 //
 //  `!p snip.rv = re.sub(r'\..*$', '.m', fn)`
 //  `!v split(getcwd(), '/')[-1]`
