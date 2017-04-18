@@ -4,6 +4,42 @@ priority -50
 #                            HF Snippets                                  #
 ###########################################################################
 
+snippet enum 
+typedef NS_ENUM(NSUInteger, $1) {
+	$2
+};
+endsnippet
+
+snippet str2data
+NSData *data = [${1:str} dataUsingEncoding:NSUTF8StringEncoding];
+endsnippet
+
+snippet data2json
+NSDictionary* ${1:dict} = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+endsnippet
+
+snippet json2data
+NSData* data = [NSJSONSerialization dataWithJSONObject:${1:dict} options:0 error:nil];
+endsnippet
+
+snippet session "NSURLSession"
+NSURLSession *session = [NSURLSession sharedSession];
+NSURLSessionDataTask *dataTask = [session dataTaskWithURL:[NSURL URLWithString:@"https://"] 
+																				completionHandler:^(NSData *data, NSURLResponse *response, NSError *error) 
+{
+	NSDictionary *json = [NSJSONSerialization JSONObjectWithData:data options:0 error:nil];
+	NSLog(@"%@", json);
+}];
+[dataTask resume];
+endsnippet
+
+snippet m "method"
+- (${1:void})${2:dummy}
+{ 
+	${3}
+}
+endsnippet
+
 # RACObserve NSObject+RACPropertySubscribing.h
 # import "EXTSynthesize.h"
 snippet @syn "category property"
@@ -16,6 +52,15 @@ endsnippet
 
 snippet waitForever
 [[expectFutureValue(done) shouldEventuallyBeforeTimingOutAfter(10000000000)] beTrue];
+endsnippet
+
+snippet safedef "SAFE_CAST_DEFINITION"
+#ifndef SAFE_CAST
+#define SAFE_CAST(Object, Type) (Type *)safe_cast_helper(Object, [Type class])
+static inline id safe_cast_helper(id x, Class c) {
+	return [x isKindOfClass:c] ? x : nil;
+}
+#endif
 endsnippet
 
 snippet safe "SAFE_CAST"
@@ -34,7 +79,7 @@ it(@"${1:does something }", ^{
 });
 endsnippet
 
-snippet OnTypedef
+snippet btype "typedef block"
 typedef void (^${1:OnIdComplete})(id data, NSError* error);
 endsnippet 
 
@@ -48,8 +93,20 @@ snippet enumerate
 	}];
 endsnippet
 
+snippet doNext
+doNext:^(id x) {
+	${2}
+}];
+endsnippet
+
 snippet subscribeNext
 subscribeNext:^(id x) {
+	${2}
+}];
+endsnippet
+
+snippet subscribeCompleted
+subscribeCompleted:^{
 	${2}
 }];
 endsnippet
@@ -81,7 +138,7 @@ map:^${1:id}(${2:id} ${3:value}){
 endsnippet
 
 snippet flattenMap
-flattenMap:^RACStream*(id value){
+flattenMap:^(id value){
 	${2}
 }];
 endsnippet
@@ -103,6 +160,14 @@ NSURLSessionDataTask *task = [[NSURLSession sharedSession] dataTaskWithRequest:r
 } ];
 [task resume];
 _task = task;
+endsnippet
+
+snippet nsp "ParameterAssert"
+NSParameterAssert(${1:NO});
+endsnippet
+
+snippet nsc "NSCAssert"
+NSCAssert(${1:NO}, @"${2}");
 endsnippet
 
 snippet a "Assert"
@@ -180,7 +245,11 @@ snippet #imp "#import <> (Imp)"
 #import <${1:Foundation/Foundation.h}>
 endsnippet
 
-snippet @mb "Block Method Parameters"
+snippet @imp "@import <> (Imp)"
+@import ${1:ReactiveObjC};
+endsnippet
+
+snippet bm "Block Method Parameters"
 (${1:returnType} (^)(${2:parameterTypes})${3:blockName}
 endsnippet
 
@@ -200,8 +269,18 @@ endsnippet
 
 snippet else "else"
 else {
-	$1;
+	$1
 }
+endsnippet
+
+snippet @ob "object declaration"
+@interface ${1} : ${2:NSObject}
+${3}
+@end
+
+@implementation $1
+
+@end
 endsnippet
 
 snippet @in "interface"
@@ -238,6 +317,19 @@ snippet init
 	}
 	return self;
 }
+endsnippet
+
+snippet lumberjack "Cocoa Lumberjack import"
+#import <CocoaLumberjack/CocoaLumberjack.h>
+#import "DDLog+LOGV.h" // for LOAD_ASYNC_ENABLED definition, not included in CocoaLumberJack.h
+
+// CocoaLumberjack module will have its own definition
+// we need to undef it
+#ifdef LOG_LEVEL_DEF
+#undef LOG_LEVEL_DEF
+#endif
+#define LOG_LEVEL_DEF ${1:MyModuleLogLevel}
+extern DDLogLevel $1;
 endsnippet
 
 # header template for .m files
