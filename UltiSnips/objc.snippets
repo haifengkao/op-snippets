@@ -4,6 +4,14 @@ priority -50
 #                            HF Snippets                                  #
 ###########################################################################
 
+snippet csdict
+NSDictionary* dict = [[CSConfigManager sharedManager] dictionaryForKey:@"${1}" defaultRule:@{${2}}];
+endsnippet
+
+snippet csstr
+NSString* str = [[CSConfigManager sharedManager] stringForKey:@"${1}" defaultRule:@"${2}"];
+endsnippet
+
 snippet enum 
 typedef NS_ENUM(NSUInteger, $1) {
 	$2
@@ -46,6 +54,12 @@ snippet @syn "category property"
 @synthesizeAssociation(`!p snip.rv = re.sub(r'\..*$', '', fn)`, ${1:myProperty}); // add category variable
 endsnippet
 
+snippet @sy "synchronize"
+@synchronized(self){
+	$1
+}
+endsnippet
+
 snippet error
 [NSError errorWithDomain:@"${1:domain}" code:${2:123} userInfo:@{NSLocalizedDescriptionKey:@"${3}"}]
 endsnippet
@@ -56,7 +70,7 @@ endsnippet
 
 snippet safedef "SAFE_CAST_DEFINITION"
 #ifndef SAFE_CAST
-#define SAFE_CAST(Object, Type) (Type *)safe_cast_helper(Object, [Type class])
+#define SAFE_CAST(Object, Type) ((Type *)safe_cast_helper(Object, [Type class]))
 static inline id safe_cast_helper(id x, Class c) {
 	return [x isKindOfClass:c] ? x : nil;
 }
@@ -88,9 +102,9 @@ snippet OnComplete
 endsnippet
 
 snippet enumerate
-	enumerateKeysAndObjectsUsingBlock:^(NSString* key, ${1:NSObject}* value, BOOL* stop){
-		${2}
-	}];
+enumerateKeysAndObjectsUsingBlock:^(NSString* key, ${1:NSObject}* value, BOOL* stop){
+	${2}
+}];
 endsnippet
 
 snippet doNext
@@ -142,6 +156,14 @@ flattenMap:^(id value){
 	${2}
 }];
 endsnippet
+
+snippet startLazily "startLazilyWithScheduler"
+[RACSignal startLazilyWithScheduler:self.scheduler block:^(id<RACSubscriber> subscriber) {
+	[subscriber sendNext:nil];
+	[subscriber sendCompleted];
+}];
+endsnippet
+
 snippet createSignal
 [RACSignal createSignal:^RACDisposable *(id<RACSubscriber> subscriber) 
 {
@@ -170,16 +192,16 @@ snippet nsc "NSCAssert"
 NSCAssert(${1:NO}, @"${2}");
 endsnippet
 
-snippet a "Assert"
+snippet as "Assert"
 NSAssert(${1:NO}, @"${2}");
 endsnippet
 
 snippet @pn "Nonatomic Property"
-@property (nonatomic, ${1/^(e)$|.*/(?1:s)/}${1:s}${1/^(?:(s)|(r)|(c)|(a))$|.*/(?1:trong)(?2:eadonly)(?3:opy)(?4:ssign)/}) ${2:NSSomeClass}* ${3:${2/^[A-Z](?:[A-Z]+|[a-z]+)([A-Z]\w*)/\l$1/}};
+@property (nonatomic, ${1/^(e)$|.*/(?1:s)/}${1:s}${1/^(?:(s)|(r)|(c)|(a)|(w))$|.*/(?1:trong)(?2:eadonly)(?3:opy)(?4:ssign)(?5:eak)/}) ${2:NSSomeClass}* ${3:${2/^[A-Z](?:[A-Z]+|[a-z]+)([A-Z]\w*)/\l$1/}};
 endsnippet
 
 snippet @p "Property"
-@property (${1/^(e)$|.*/(?1:s)/}${1:s}${1/^(?:(s)|(r)|(c)|(a))$|.*/(?1:trong)(?2:eadonly)(?3:opy)(?4:ssign)/}) ${2:NSSomeClass}* ${3:${2/^[A-Z](?:[A-Z]+|[a-z]+)([A-Z]\w*)/\l$1/}};
+@property (${1/^(e)$|.*/(?1:s)/}${1:s}${1/^(?:(s)|(r)|(c)|(a)|(w))$|.*/(?1:trong)(?2:eadonly)(?3:opy)(?4:ssign)(?5:eak)/}) ${2:NSSomeClass}* ${3:${2/^[A-Z](?:[A-Z]+|[a-z]+)([A-Z]\w*)/\l$1/}};
 endsnippet
 
 snippet r "return"
@@ -237,6 +259,10 @@ dispatch_once(&onceToken, ^{
 });
 endsnippet
 
+snippet retainCount "retainCount leak check"
+[[expectFutureValue(@((long)CFGetRetainCount((__bridge CFTypeRef)${1:myObj}) == 2)) shouldEventuallyBeforeTimingOutAfter(30.0)] beTrue];
+endsnippet
+
 snippet #im "#import (imp)" b
 #import "${1:`!p snip.rv = re.sub(r'\..*$', '.h', fn)`}"
 endsnippet
@@ -249,11 +275,16 @@ snippet @imp "@import <> (Imp)"
 @import ${1:ReactiveObjC};
 endsnippet
 
+snippet bl "Block Local Variable"
+${1:returnType} (^${2:blockName})(${3:parameterTypes}) = ^$1($3) {
+	$4
+};
+endsnippet
 snippet bm "Block Method Parameters"
-(${1:returnType} (^)(${2:parameterTypes})${3:blockName}
+(${1:returnType} (^)(${2:parameterTypes}))${3:blockName}
 endsnippet
 
-snippet @pb "Block Property"
+snippet bp "Block Property"
 @property (nonatomic, copy) ${1:void} (^${2:blockName})(${3:parameterTypes}); 
 endsnippet
 
@@ -357,7 +388,7 @@ snippet ht
 //
 //
 
-#import <Foundation/Foundation.h>
+@import Foundation;
 endsnippet
 
 # spec template for kiwi and nocilla spec files
@@ -468,7 +499,7 @@ snippet ut
 //  Created by `!v systemlist('git config user.name || whoami')[0]` on `!v strftime('%Y/%m/%d')`.
 //
 
-#import <Kiwi/Kiwi.h>
+@import Kiwi;
 #import "`!p snip.rv = re.sub(r'\..*$', '', fn)[:-4:] + ".h"`"
 
 SPEC_BEGIN(`!p snip.rv = re.sub(r'\..*$', '', fn)`)
@@ -603,11 +634,12 @@ snippet cdacc "CoreData Accessors Implementation"
 }
 endsnippet
 
-snippet delegate "Delegate Responds to Selector"
-if([${1:[self delegate]} respondsToSelector:@selector(${2:selfDidSomething:})])
-	[$1 ${3:${2/((^\s*([A-Za-z0-9_]*:)\s*)|(:\s*$)|(:\s*))/(?2:$2self :\:<>)(?4::)(?5: :)/g}}];
+# don't know how to use it
+#snippet delegate "Delegate Responds to Selector"
+#if([${1:[self delegate]} respondsToSelector:@selector(${2:selfDidSomething:})])
+	#[$1 ${3:${2/((^\s*([A-Za-z0-9_]*:)\s*)|(:\s*$)|(:\s*))/(?2:$2self :\:<>)(?4::)(?5: :)/g}}];
 
-endsnippet
+#endsnippet
 
 snippet thread "Detach New NSThread"
 [NSThread detachNewThreadSelector:@selector(${1:method}:) toTarget:${2:aTarget} withObject:${3:anArgument}]
