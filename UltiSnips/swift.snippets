@@ -31,7 +31,7 @@ snippet mt
 //
 //
 
-import UIKit;
+import UIKit
 endsnippet
 
 snippet as "associatedtype" b
@@ -40,6 +40,10 @@ endsnippet
 
 snippet ca "case" b
 case ${1:pattern}:$0
+endsnippet
+
+snippet var "instance var"
+var ${1:name}: ${2:String}
 endsnippet
 
 snippet cv "class var"
@@ -117,11 +121,27 @@ snippet im "import" b
 import ${1:Foundation,Cocoa,UIKit,CoreGraphics,WebKit}
 endsnippet
 
-snippet in "init"
-init${1:?!<Value>}(${2:with value: Value})`!p print_unless_empty(" ", 3)`${3:throws}`!p print_unless_empty(" where ", 4)`${4:`!p print_if_generics(": ConformsTo", 1)`} {
+snippet r "return"
+return $0
+endsnippet
+
+snippet f "func"
+func ${1:name}(${2:value}: ${3:type}) {
 	$0
 }
 endsnippet
+
+snippet init "init"
+init(${1:value}: ${2:type}) {
+	$0
+}
+endsnippet
+
+#snippet init "init"
+#init${1:?!<Value>}(${2:with value: Value})`!p print_unless_empty(" ", 3)`${3:throws}`!p print_unless_empty(" where ", 4)`${4:`!p print_if_generics(": ConformsTo", 1)`} {
+	#$0
+#}
+#endsnippet
 
 snippet mark "Mark"
 // MARK: 
